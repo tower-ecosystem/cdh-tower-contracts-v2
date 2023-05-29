@@ -19,8 +19,10 @@ module.exports = async ({getNamedAccounts, deployments, getChainId, getUnnamedAc
 };
 
 module.exports.skip = multiSkip([
-  // skipIfChainIdIs(['1']), // migration already done
+  skipIfChainIdIs(['1']), // migration already done
   skipIfChainIdIs(['5']), // migration already done for goerli
+  skipIfChainIdIs(['80001']), // mumbai
+  skipIfChainIdIs(['137']), // polygon
   skipIfContractExists('HeroPointsERC1155Redemption'), // contract guard
 ]);
 

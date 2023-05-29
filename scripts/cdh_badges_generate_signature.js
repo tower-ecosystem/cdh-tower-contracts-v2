@@ -25,13 +25,13 @@ const getNetworkUrl = (network) => {
   } else if (network === 'polygonMumbai') {
     return 'https://rpc-mumbai.matic.today';
   } else if (network === 'polygon') {
-    return 'https://polygon.llamarpc.com\t';
+    return 'https://polygon.llamarpc.com';
   }
 };
 
 const ethNetworkUrl = getNetworkUrl(networkName);
 const CONTRACTS_CONFIGURATION = readConfiguration(`./deployments/${networkName}/CDHBadges.json`);
-const BADGE_VERIFIER_PRIVATE_KEY = process.env.BADGES_VERIFIER; // 0x6036Ab472708F025d5DABAC89E8A152E12342125
+const BADGE_VERIFIER_PRIVATE_KEY = process.env.BADGES_VERIFIER; //
 
 const web3 = new Web3(ethNetworkUrl);
 

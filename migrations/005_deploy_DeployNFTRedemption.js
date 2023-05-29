@@ -31,9 +31,9 @@ module.exports = async ({getNamedAccounts, deployments, getChainId, getUnnamedAc
 
 module.exports.skip = multiSkip([
   skipIfChainIdIs(['1']), // migration already done
-  // skipIfChainIdIs(['80001']), // migration already done
+  skipIfChainIdIs(['80001']), // migration already done
   skipIfChainIdIs(['5']), // migration already done for goerli
-  // skipIfChainIdIs(['137']), // migration already done
+  skipIfChainIdIs(['137']), // migration already done
   skipIfChainIdIs(['97']), // bsctest
   skipIfChainIdIs(['56']), // bsc mainnet
   skipIfContractExists('NFTRedemption'), // contract guard

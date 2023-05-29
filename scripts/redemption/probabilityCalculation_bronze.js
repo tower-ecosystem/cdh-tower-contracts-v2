@@ -41,9 +41,12 @@ const rareCardProbabilityInFirstCards = firstCard['Rare'] / totalFirstCards;
 const epicCardProbabilityInFirstCards = firstCard['Epic'] / totalFirstCards;
 const commonCardProbabilityInFirstCards = firstCard['Common'] / totalFirstCards;
 console.log(
-  `Rare: ${rareCardProbabilityInFirstCards} Epic: ${epicCardProbabilityInFirstCards} Common: ${commonCardProbabilityInFirstCards} Total probability: ${
-    rareCardProbabilityInFirstCards + epicCardProbabilityInFirstCards + commonCardProbabilityInFirstCards
-  }`
+  `
+  Rare: ${rareCardProbabilityInFirstCards} \
+  Epic: ${epicCardProbabilityInFirstCards} \
+  Common: ${commonCardProbabilityInFirstCards} \
+  Total probability: ${rareCardProbabilityInFirstCards + epicCardProbabilityInFirstCards + commonCardProbabilityInFirstCards}
+  `
 );
 
 console.log('For 2nd card');
@@ -52,9 +55,12 @@ const rareCardProbabilityInSecondCards = secondCard['Rare'] / totalSecondCards;
 const epicCardProbabilityInSecondCards = secondCard['Epic'] / totalSecondCards;
 const commonCardProbabilityInSecondCards = secondCard['Common'] / totalSecondCards;
 console.log(
-  `Rare: ${rareCardProbabilityInSecondCards} Epic: ${epicCardProbabilityInSecondCards} Common: ${commonCardProbabilityInSecondCards} Total probability: ${
-    rareCardProbabilityInSecondCards + epicCardProbabilityInSecondCards + commonCardProbabilityInSecondCards
-  }`
+  `
+  Rare: ${rareCardProbabilityInSecondCards} \
+  Epic: ${epicCardProbabilityInSecondCards} \
+  Common: ${commonCardProbabilityInSecondCards} \
+  Total probability: ${rareCardProbabilityInSecondCards + epicCardProbabilityInSecondCards + commonCardProbabilityInSecondCards}
+  `
 );
 
 console.log('For 3rd card');
@@ -63,7 +69,10 @@ const rareCardProbabilityInThirdCards = thirdCard['Rare'] / totalThirdCards;
 const epicCardProbabilityInThirdCards = thirdCard['Epic'] / totalThirdCards;
 const commonCardProbabilityInThirdCards = thirdCard['Common'] / totalThirdCards;
 console.log(
-  `Rare: ${rareCardProbabilityInThirdCards} Epic: ${epicCardProbabilityInThirdCards} Common: ${commonCardProbabilityInThirdCards} Total probability: ${
-    rareCardProbabilityInThirdCards + epicCardProbabilityInThirdCards + commonCardProbabilityInThirdCards
-  }`
+  `
+  Rare: ${rareCardProbabilityInThirdCards} \
+  Epic: ${epicCardProbabilityInThirdCards} \
+  Common: ${commonCardProbabilityInThirdCards} \
+  Total probability: ${rareCardProbabilityInThirdCards + epicCardProbabilityInThirdCards + commonCardProbabilityInThirdCards}
+  `
 );

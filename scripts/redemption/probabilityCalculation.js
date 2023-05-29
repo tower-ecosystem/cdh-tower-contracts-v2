@@ -51,9 +51,12 @@ const rareCardProbabilityInFirstCards = firstCard['Rare'] / totalFirstCards;
 const epicCardProbabilityInFirstCards = firstCard['Epic'] / totalFirstCards;
 const legendaryCardProbabilityInFirstCards = firstCard['Legendary'] / totalFirstCards;
 console.log(
-  `Rare: ${rareCardProbabilityInFirstCards} Epic: ${epicCardProbabilityInFirstCards} Legendary: ${legendaryCardProbabilityInFirstCards} Total probability: ${
-    rareCardProbabilityInFirstCards + epicCardProbabilityInFirstCards + legendaryCardProbabilityInFirstCards
-  }`
+  `
+  Rare: ${rareCardProbabilityInFirstCards} \
+  Epic: ${epicCardProbabilityInFirstCards} \
+  Legendary: ${legendaryCardProbabilityInFirstCards} \
+  Total probability: ${rareCardProbabilityInFirstCards + epicCardProbabilityInFirstCards + legendaryCardProbabilityInFirstCards}
+  `
 );
 
 console.log('For 2nd card');
@@ -62,9 +65,12 @@ const rareCardProbabilityInSecondCards = secondCard['Rare'] / totalSecondCards;
 const epicCardProbabilityInSecondCards = secondCard['Epic'] / totalSecondCards;
 const legendaryCardProbabilityInSecondCards = secondCard['Legendary'] / totalSecondCards;
 console.log(
-  `Rare: ${rareCardProbabilityInSecondCards} Epic: ${epicCardProbabilityInSecondCards} Legendary: ${legendaryCardProbabilityInSecondCards} Total probability: ${
-    rareCardProbabilityInSecondCards + epicCardProbabilityInSecondCards + legendaryCardProbabilityInSecondCards
-  }`
+  `
+  Rare: ${rareCardProbabilityInSecondCards} \
+  Epic: ${epicCardProbabilityInSecondCards} \
+  Legendary: ${legendaryCardProbabilityInSecondCards} \
+  Total probability: ${rareCardProbabilityInSecondCards + epicCardProbabilityInSecondCards + legendaryCardProbabilityInSecondCards}
+  `
 );
 
 console.log('For 3rd card');
@@ -73,9 +79,12 @@ const rareCardProbabilityInThirdCards = thirdCard['Rare'] / totalThirdCards;
 const epicCardProbabilityInThirdCards = thirdCard['Epic'] / totalThirdCards;
 const legendaryCardProbabilityInThirdCards = thirdCard['Legendary'] / totalThirdCards;
 console.log(
-  `Rare: ${rareCardProbabilityInThirdCards} Epic: ${epicCardProbabilityInThirdCards} Legendary: ${legendaryCardProbabilityInThirdCards} Total probability: ${
-    rareCardProbabilityInThirdCards + epicCardProbabilityInThirdCards + legendaryCardProbabilityInThirdCards
-  }`
+  `
+  Rare: ${rareCardProbabilityInThirdCards} \
+  Epic: ${epicCardProbabilityInThirdCards} \
+  Legendary: ${legendaryCardProbabilityInThirdCards}\
+   Total probability: ${rareCardProbabilityInThirdCards + epicCardProbabilityInThirdCards + legendaryCardProbabilityInThirdCards}
+  `
 );
 
 console.log('For 4th card');
@@ -84,9 +93,12 @@ const rareCardProbabilityInFourthCards = fourthCard['Rare'] / totalFourthCards;
 const epicCardProbabilityInFourthCards = fourthCard['Epic'] / totalFourthCards;
 const legendaryCardProbabilityInFourthCards = fourthCard['Legendary'] / totalFourthCards;
 console.log(
-  `Rare: ${rareCardProbabilityInFourthCards} Epic: ${epicCardProbabilityInFourthCards} Legendary: ${legendaryCardProbabilityInFourthCards} Total probability: ${
-    rareCardProbabilityInFourthCards + epicCardProbabilityInFourthCards + legendaryCardProbabilityInFourthCards
-  }`
+  `
+  Rare: ${rareCardProbabilityInFourthCards} \
+  Epic: ${epicCardProbabilityInFourthCards} \
+  Legendary: ${legendaryCardProbabilityInFourthCards} \
+  Total probability: ${rareCardProbabilityInFourthCards + epicCardProbabilityInFourthCards + legendaryCardProbabilityInFourthCards}
+  `
 );
 
 console.log('For 5th card');
@@ -95,7 +107,10 @@ const rareCardProbabilityInFifthCards = fifthCard['Rare'] / totalFifthCards;
 const epicCardProbabilityInFifthCards = fifthCard['Epic'] / totalFifthCards;
 const legendaryCardProbabilityInFifthCards = fifthCard['Legendary'] / totalFifthCards;
 console.log(
-  `Rare: ${rareCardProbabilityInFifthCards} Epic: ${epicCardProbabilityInFifthCards} Legendary: ${legendaryCardProbabilityInFifthCards} Total probability: ${
-    rareCardProbabilityInFifthCards + epicCardProbabilityInFifthCards + legendaryCardProbabilityInFifthCards
-  }`
+  `
+  Rare: ${rareCardProbabilityInFifthCards} \
+  Epic: ${epicCardProbabilityInFifthCards} \
+   Legendary: ${legendaryCardProbabilityInFifthCards} \
+   Total probability: ${rareCardProbabilityInFifthCards + epicCardProbabilityInFifthCards + legendaryCardProbabilityInFifthCards}
+  `
 );

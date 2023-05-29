@@ -477,7 +477,7 @@
         "logIndex": 14,
         "blockHash": "0x23cb67a77669a3e84a16290c35c5c0dbf9dafe734d36ecea7bd50ae597305306"
       },
-      {0x584fc714ADCBf1Ce9d3023c9B1403BcA56Ab64Bf
+      {
         "transactionIndex": 5,
         "blockNumber": 37302280,
         "transactionHash": "0x5b15f38d81a278e9df5fbc7ab2c5a775af5359d848f41faa42504590d552da2a",
