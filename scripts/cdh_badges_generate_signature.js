@@ -25,9 +25,9 @@ const getNetworkUrl = (network) => {
   } else if (network === 'polygonMumbai') {
     return 'https://rpc-mumbai.matic.today';
   } else if (network === 'polygon') {
-    return 'https://polygon.llamarpc.com\t';
+    return 'https://polygon.llamarpc.com';
   }
-};
+}
 
 const ethNetworkUrl = getNetworkUrl(networkName);
 const CONTRACTS_CONFIGURATION = readConfiguration(`./deployments/${networkName}/CDHBadges.json`);
@@ -46,7 +46,7 @@ payload = {
 const signOrderPayload = async (payload) => {
   let {sender, tokenIds, amounts} = payload;
   const seedNonce = await contractInstance.methods.seedNonce(sender).call();
-  console.log(`Seed Nonce for sender - ${sender} : "${contractInstance.options.address}" in Contract: ${seedNonce}`);
+  console.log(`Seed Nonce for sender - ${sender} : "${contractInstance.options.address}" in Contract: ${seedNonce}`)
   const hash = web3.utils.soliditySha3(sender, tokenIds.toString(), amounts.toString(), seedNonce);
   await console.log('Hash', hash);
 

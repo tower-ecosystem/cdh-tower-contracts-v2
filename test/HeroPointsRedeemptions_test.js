@@ -5,7 +5,7 @@ let redemptionContract;
 let erc721MockContract;
 let erc1155MockContract;
 let erc20MockContract;
-describe('Hero Points Redemption contract', function () {
+describe('Hero Points Redemption contract', async function () {
   beforeEach(async function () {
     const [owner, addr1] = await ethers.getSigners();
     const RedemptionContractFactory = await ethers.getContractFactory('HeroPointsERC1155Redemption');

@@ -36,9 +36,8 @@ contract CDHBadges is Initializable, ERC1155Upgradeable, PausableUpgradeable, Ow
         __ERC1155_init("");
         __Pausable_init();
         __Ownable_init();
-        Accessinitialize();
-
         _setURI(_metadataUri);
+        BadgesAccessControl.Accessinitialize();
     }
 
     // constructor(string memory _metadataUri) public ERC1155("")  BadgesAccessControl() {

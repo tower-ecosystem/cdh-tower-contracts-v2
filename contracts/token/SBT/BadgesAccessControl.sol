@@ -24,8 +24,8 @@ contract BadgesAccessControl is AccessControlUpgradeable {
 
     function Accessinitialize() public initializer {
         __AccessControl_init_unchained();
-        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-        _setupRole(MINTER_ROLE_ADMIN, _msgSender());
-        _setupRole(MINTER_ROLE, _msgSender());
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(MINTER_ROLE_ADMIN, msg.sender);
+        _setupRole(MINTER_ROLE, msg.sender);
     }
 }

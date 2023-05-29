@@ -13,7 +13,7 @@ module.exports = {
     'no-else-return': ['error', {allowElseIf: true}],
     'max-params': ['error', 6],
     'no-await-in-loop': 'off',
-    'max-len': ['error', {code: 250}],
+    'max-len': ['error', {code: 150}],
     'mocha/no-exports': 'off',
     'mocha/no-top-level-hooks': 'off',
     'mocha/no-setup-in-describe': 'off',

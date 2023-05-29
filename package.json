@@ -74,6 +74,7 @@
     "@animoca/ethereum-migrations": "^0.1.0-rc.5",
     "@openzeppelin/contracts": "^4.8.0",
     "@openzeppelin/contracts-upgradeable": "^4.8.0",
+    "@openzeppelin/hardhat-upgrades": "^1.21.0",
     "dotenv": "^16.0.3",
     "eslint-plugin-mocha": "^10.1.0",
     "hardhat-deploy": "^0.11.20",
