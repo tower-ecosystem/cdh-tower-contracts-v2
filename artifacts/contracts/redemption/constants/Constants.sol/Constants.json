@@ -1,0 +1,154 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "Constants",
+  "sourceName": "contracts/redemption/constants/Constants.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "CRAZY_DEFENCE_HEROES",
+      "outputs": [
+        {
+          "internalType": "bytes4",
+          "name": "",
+          "type": "bytes4"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "EQUIPMENT_POOL_IDENTIFIER",
+      "outputs": [
+        {
+          "internalType": "bytes1",
+          "name": "",
+          "type": "bytes1"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "HERO_POOL_IDENTIFIER",
+      "outputs": [
+        {
+          "internalType": "bytes1",
+          "name": "",
+          "type": "bytes1"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "RARITY_COMMON",
+      "outputs": [
+        {
+          "internalType": "bytes1",
+          "name": "",
+          "type": "bytes1"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "RARITY_EPIC",
+      "outputs": [
+        {
+          "internalType": "bytes1",
+          "name": "",
+          "type": "bytes1"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "RARITY_LEGENDARY",
+      "outputs": [
+        {
+          "internalType": "bytes1",
+          "name": "",
+          "type": "bytes1"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "RARITY_RARE",
+      "outputs": [
+        {
+          "internalType": "bytes1",
+          "name": "",
+          "type": "bytes1"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "RARITY_UNKNOWN",
+      "outputs": [
+        {
+          "internalType": "bytes1",
+          "name": "",
+          "type": "bytes1"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "SPELL_POOL_IDENTIFIER",
+      "outputs": [
+        {
+          "internalType": "bytes1",
+          "name": "",
+          "type": "bytes1"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "TOWER_POOL_IDENTIFIER",
+      "outputs": [
+        {
+          "internalType": "bytes1",
+          "name": "",
+          "type": "bytes1"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "UNKNOWN_POOL_IDENTIFIER",
+      "outputs": [
+        {
+          "internalType": "bytes1",
+          "name": "",
+          "type": "bytes1"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x61023e61003a600b82828239805160001a60731461002d57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600436106100d15760003560e01c80637aad87891161008b578063dee301fd11610065578063dee301fd146101e1578063e9ceeea4146100d6578063f83d758b146101e157600080fd5b80637aad8789146101ba57806394eb5dea146101335780639e94bb931461013b57600080fd5b80633663eff4116100bc5780633663eff41461013b57806359a9a960146101625780635dcf46a3146101ba57600080fd5b8062c84c20146100d6578062ccddd814610133575b600080fd5b6100fd7f030000000000000000000000000000000000000000000000000000000000000081565b6040517fff0000000000000000000000000000000000000000000000000000000000000090911681526020015b60405180910390f35b6100fd600081565b6100fd7f020000000000000000000000000000000000000000000000000000000000000081565b6101897f2ebc3cb30000000000000000000000000000000000000000000000000000000081565b6040517fffffffff00000000000000000000000000000000000000000000000000000000909116815260200161012a565b6100fd7f010000000000000000000000000000000000000000000000000000000000000081565b6100fd7f04000000000000000000000000000000000000000000000000000000000000008156fea26469706673582212207d5f648fa90964c062d3f0dd889684a9d7e3eeabea546e5d449851cc741a9ee064736f6c63430008110033",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600436106100d15760003560e01c80637aad87891161008b578063dee301fd11610065578063dee301fd146101e1578063e9ceeea4146100d6578063f83d758b146101e157600080fd5b80637aad8789146101ba57806394eb5dea146101335780639e94bb931461013b57600080fd5b80633663eff4116100bc5780633663eff41461013b57806359a9a960146101625780635dcf46a3146101ba57600080fd5b8062c84c20146100d6578062ccddd814610133575b600080fd5b6100fd7f030000000000000000000000000000000000000000000000000000000000000081565b6040517fff0000000000000000000000000000000000000000000000000000000000000090911681526020015b60405180910390f35b6100fd600081565b6100fd7f020000000000000000000000000000000000000000000000000000000000000081565b6101897f2ebc3cb30000000000000000000000000000000000000000000000000000000081565b6040517fffffffff00000000000000000000000000000000000000000000000000000000909116815260200161012a565b6100fd7f010000000000000000000000000000000000000000000000000000000000000081565b6100fd7f04000000000000000000000000000000000000000000000000000000000000008156fea26469706673582212207d5f648fa90964c062d3f0dd889684a9d7e3eeabea546e5d449851cc741a9ee064736f6c63430008110033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
