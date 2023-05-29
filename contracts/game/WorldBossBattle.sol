@@ -43,6 +43,8 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
     event NFTUnstaked(address indexed _nftReceiver, uint256 _tokenId, string _battleId);
     /// @notice Event is emitted when battle period unstake status is set
     event SetBattlePeriodUnstakeStatus(address indexed setterAddress, bool _status);
+    /// @notice Event is emitted when minimum tokens required to stake is set
+    event SetMinTokensRequired(address _sender, uint256 _oldMinTokensRequired, uint256 _newMinTokensRequired);
 
     /// @notice to store cdhNFT contract address
     ICDHNFTInventory public cdhNFT;
@@ -180,10 +182,10 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
 
     /**
      * @notice Check the limit of token that can be staked
-     * @param _tokenIds tokenIDs that about to staked
+     * @param tokenLength number of tokenIDs that about to staked
      */
-    function validStakeCount(uint256[] memory _tokenIds, string memory _battleId, address _player) public view returns (bool) {
-        return (stakers[_player].battleTokenIds[_battleId].length + _tokenIds.length) <= maxStakeCount;
+    function validStakeCount(uint256 tokenLength, string memory _battleId, address _player) public view returns (bool) {
+        return (stakers[_player].battleTokenIds[_battleId].length + tokenLength) <= maxStakeCount;
     }
 
     /**
@@ -215,9 +217,11 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @param _unstakeStatus boolean
      */
     function setBattlePeriodUnstakeStatus(bool _unstakeStatus) external {
-        require(accessControls.hasManagerRole(_msgSender()), "WBB: Unauthorized");
+        address msgSender = _msgSender();
+
+        require(accessControls.hasManagerRole(msgSender), "WBB: Unauthorized");
         enableBattlePeriodUnstake = _unstakeStatus;
-        emit SetBattlePeriodUnstakeStatus(_msgSender(), _unstakeStatus);
+        emit SetBattlePeriodUnstakeStatus(msgSender, _unstakeStatus);
     }
 
     /**
@@ -225,7 +229,10 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @param _value a uint value for setting minimum tokens required.
      */
     function setMinTokensRequired(uint256 _value) external {
-        require(accessControls.hasManagerRole(_msgSender()), "WBB: Unauthorized");
+        address msgSender = _msgSender();
+
+        require(accessControls.hasManagerRole(msgSender), "WBB: Unauthorized");
+        emit SetMinTokensRequired(msgSender, _value, minTokensRequired);
         minTokensRequired = _value;
     }
 
@@ -245,7 +252,7 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @param _player Address of player checking eligibility of
      * @return boolean if statement is true
      */
-    function isEligibleToStake(string memory _pastBattleId, address _player) public view returns (bool) {
+    function isEligibleToStake(string calldata _pastBattleId, address _player) public view returns (bool) {
         return stakers[_player].battleTokenIds[_pastBattleId].length > 0;
     }
 
@@ -288,6 +295,7 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @dev it calls internalStake function for further processing
      */
     function stake(uint256 _tokenId, string memory _battleId) external override whenBattleIsActive(_battleId) {
+        require(validStakeCount(1, _battleId, msg.sender), "WBB: Max tokens staked.");
         internalStake(_msgSender(), _tokenId, _battleId);
         ICDHNFTInventory(cdhNFT).safeTransferFrom(_msgSender(), address(this), _tokenId, 1, "0x");
     }
@@ -300,7 +308,7 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      */
     function stakeTokens(uint256[] memory tokenIds, string memory _battleId) external override whenBattleIsActive(_battleId) {
         address player = _msgSender();
-        require(validStakeCount(tokenIds, _battleId, player), "WBB: Max tokens staked.");
+        require(validStakeCount(tokenIds.length, _battleId, player), "WBB: Max tokens staked.");
         uint256[] memory tokenAmounts = new uint256[](tokenIds.length);
         for (uint i = 0; i < tokenIds.length; i++) {
             internalStake(player, tokenIds[i], _battleId);
@@ -316,6 +324,8 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @param _battleId in which the token id will be staked
      */
     function internalStake(address _player, uint256 _tokenId, string memory _battleId) internal whenNotPaused nonReentrant {
+        require(tokenOwner[_tokenId] == address(0), "WBB: Token already staked");
+
         TokenStaker storage staker = stakers[_player];
 
         uint256[] memory existingStakedTokens = staker.battleTokenIds[_battleId];
@@ -345,7 +355,7 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @notice Get all the tokens staked by user in the battleId
      * @param _player is the user address
      */
-    function getStakedTokensForBattle(address _player, string memory _battleId) public view returns (uint256[] memory tokenIds) {
+    function getStakedTokensForBattle(address _player, string calldata _battleId) public view returns (uint256[] memory tokenIds) {
         return stakers[_player].battleTokenIds[_battleId];
     }
 
@@ -357,7 +367,7 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @param _battleId is unique battle from which the NFT will be unstaked
      * @dev Calls internalUnStake function for unstaking tokens
      */
-    function unstake(uint256 _tokenId, string memory _battleId) external override unstakeValidate(_battleId) {
+    function unstake(uint256 _tokenId, string calldata _battleId) external override unstakeValidate(_battleId) {
         address player = _msgSender();
         internalUnstake(player, _tokenId, _battleId);
         ICDHNFTInventory(cdhNFT).safeTransferFrom(address(this), player, _tokenId, 1, "0x");
@@ -368,7 +378,7 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @param _battleId is unique battle in which the NFT will be unstaked
      * @dev it calls internalUnStakeAll function for further processing
      */
-    function unstakeAll(string memory _battleId) external override unstakeValidate(_battleId) {
+    function unstakeAll(string calldata _battleId) external override unstakeValidate(_battleId) {
         address player = _msgSender();
         internalUnstakeAll(player, _battleId);
     }
@@ -379,7 +389,7 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @param _battleId is unique battle in which the NFT will be unstaked
      * @dev it calls internalUnStake function for further processing
      */
-    function unstakeTokens(uint256[] memory tokenIds, string memory _battleId) external override unstakeValidate(_battleId) {
+    function unstakeTokens(uint256[] memory tokenIds, string calldata _battleId) external override unstakeValidate(_battleId) {
         address player = _msgSender();
         uint256[] memory tokenAmounts = new uint256[](tokenIds.length);
         for (uint i = 0; i < tokenIds.length; i++) {
@@ -395,7 +405,7 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @param _tokenId is tokenid that user staked
      * @param _battleId in which the token id will be unstaked
      */
-    function internalUnstake(address _player, uint256 _tokenId, string memory _battleId) internal nonReentrant {
+    function internalUnstake(address _player, uint256 _tokenId, string calldata _battleId) internal nonReentrant {
         require(tokenOwner[_tokenId] == _player, "WBB: Unauthorized.");
 
         require(keccak256(bytes(tokenToBattleId[_tokenId])) == keccak256(bytes(_battleId)), "WBB: Card not staked in given battle");
@@ -428,7 +438,6 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
 
         if (staker.battleTokenIds[_battleId].length == 0) {
             address lastStakerAddress = stakersAddress[stakersAddress.length - 1];
-            stakersAddress.pop();
             if (stakersAddress.length > 0) {
                 uint256 stakerIndex = 0;
                 for (uint256 i = 0; i < stakersAddress.length; i++) {
@@ -439,6 +448,7 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
                 }
                 stakersAddress[stakerIndex] = lastStakerAddress;
             }
+            stakersAddress.pop();
         }
         delete tokenOwner[_tokenId];
         delete tokenToBattleId[_tokenId];
@@ -451,7 +461,7 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @param _player is address of a user
      * @param _battleId in which the token id will be unstaked
      */
-    function internalUnstakeAll(address _player, string memory _battleId) internal {
+    function internalUnstakeAll(address _player, string calldata _battleId) internal {
         uint256[] memory stakedToken = stakers[_player].battleTokenIds[_battleId];
         uint256 nftCounts = stakedToken.length;
         uint256[] memory tokenAmounts = new uint256[](stakedToken.length);
@@ -469,7 +479,7 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @param _tokenIds is tokenid that user have
      * @param _battleId in which the token id will be unstaked
      */
-    function internalUnstakeBatch(address _player, uint256[] memory _tokenIds, string memory _battleId) internal {
+    function internalUnstakeBatch(address _player, uint256[] memory _tokenIds, string calldata _battleId) internal {
         uint256[] memory tokenAmounts = new uint256[](_tokenIds.length);
         for (uint i = 0; i < _tokenIds.length; i++) {
             internalUnstake(_player, _tokenIds[i], _battleId);
@@ -484,7 +494,7 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @param _player the address of a user which nft will be unstaked
      * @dev it calls internalUnStakeAll function for further processing
      */
-    function unstakeAllInternal(address _player, string memory _battleId) external unstakeValidate(_battleId) {
+    function unstakeAllInternal(address _player, string calldata _battleId) external unstakeValidate(_battleId) {
         require(accessControls.hasManagerRole(_msgSender()), "WBB: Unauthorized");
         internalUnstakeAll(_player, _battleId);
     }
@@ -496,7 +506,7 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
      * @param _player the address of a user which nft will be unstaked
      * @dev it calls internalUnStakeAll function for further processing
      */
-    function unstakeTokensInternal(address _player, uint256[] memory _tokenIds, string memory _battleId) external unstakeValidate(_battleId) {
+    function unstakeTokensInternal(address _player, uint256[] memory _tokenIds, string calldata _battleId) external unstakeValidate(_battleId) {
         require(accessControls.hasManagerRole(_msgSender()), "WBB: Unauthorized");
         internalUnstakeBatch(_player, _tokenIds, _battleId);
     }
@@ -516,4 +526,11 @@ contract WorldBossBattle is Initializable, ContextUpgradeable, GameStakeOps, Pau
         require(accessControls.hasManagerRole(_msgSender()), "WBB: Unauthorized");
         _unpause();
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] __gap;
 }

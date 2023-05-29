@@ -14,7 +14,7 @@ describe('WorldBattleBoss contract', function () {
   const timestampEndDate = Math.floor(Date.now() / 1000 + 60 * 60 * 5);
 
   beforeEach(async function () {
-    [owner, addr1, addr2, steal, lastAddr, newTokenAddress] = await ethers.getSigners();
+    [owner, addr1, addr2, addr3, addr4, addr5, steal, lastAddr, newTokenAddress] = await ethers.getSigners();
     deployer = owner.address;
     nullAddress = '0x0000000000000000000000000000000000000000';
     account1 = addr1.address;
@@ -25,7 +25,7 @@ describe('WorldBattleBoss contract', function () {
      * step1 : getting artifacts of cdhInventory, ERC20Mock, GameAccessControls, WBBActions, WorldBossBatlle
      * step2: deploy cdhInventory, ERC20Mock, GameAccessControls contracts
      * step3: use GameAccessControls to deploy upgradable WBBActions
-     * step4: use cdhInventory, ERC20Mock, nftHolder address, signer address, maxStakeCount, WBBActions address, 
+     * step4: use cdhInventory, ERC20Mock, nftHolder address, signer address, maxStakeCount, WBBActions address,
      *          GameAccessControls address to deploy upgradable WBB
      * step5: set Approval for cdhInventory Contract
      * step6: minting NFT from cdhInventory
@@ -143,6 +143,7 @@ describe('WorldBattleBoss contract', function () {
         .withArgs(WBBActionsContract.address, newWBBActionsAddress.address, owner.address);
     });
   });
+
   describe('Set max stake count', function () {
     it('should set max state count', async function () {
       await WorldBossBattleContract.connect(owner).setMaxStakeCount(100);
@@ -160,6 +161,7 @@ describe('WorldBattleBoss contract', function () {
         .withArgs(100, newMaxStakeCount, owner.address);
     });
   });
+
   describe('Set cool down period ', function () {
     it('should set cool down period', async function () {
       await WorldBossBattleContract.connect(owner).setCoolDownPeriod(3600);
@@ -188,6 +190,7 @@ describe('WorldBattleBoss contract', function () {
       await expect(WorldBossBattleContract.connect(addr1).setBattlePeriodUnstakeStatus(true)).to.be.revertedWith('WBB: Unauthorized');
     });
   });
+
   describe('Set minimum tokens required to stake', function () {
     it('should set minimum tokens required to stake', async function () {
       await WorldBossBattleContract.connect(owner).setMinTokensRequired(1000);
@@ -198,6 +201,7 @@ describe('WorldBattleBoss contract', function () {
       await expect(WorldBossBattleContract.connect(addr1).setMinTokensRequired(1000)).to.be.revertedWith('WBB: Unauthorized');
     });
   });
+
   describe('Others', function () {
     it('get latest battle', async function () {
       await WBBActionsContract.connect(owner).createBoss('0', 'abc', 100, 'abc');
@@ -287,6 +291,26 @@ describe('WorldBattleBoss contract', function () {
       await expect(WorldBossBattleContract.connect(owner).stake(2, '1')).to.be.revertedWith('ERC1155: insufficient balance for transfer');
     });
 
+    it('cannot stake token if tokenId is already staked', async function () {
+      // mint 2 nfts of same TokenId
+      await cdhInventory.mint(deployer, 1, 2, 0x00);
+
+      //minting Tower Tokens from NormalERC20
+      await towerToken.mint(deployer, '1000000000000000000000');
+
+      // we need the staker to setApproval for all to the staking system contract
+      await cdhInventory.connect(addr1).setApprovalForAll(WorldBossBattleContract.address, true);
+
+      //creating boss
+      await WBBActionsContract.connect(owner).createBoss('0', 'abc', 100, 'abc');
+      //creating battle
+      await WBBActionsContract.connect(owner).createBattle('1', ['0'], timestampStartDate, timestampEndDate);
+
+      await WorldBossBattleContract.connect(owner).stake(1, '1');
+      expect(await cdhInventory.balanceOf(deployer, 1)).to.equal(1);
+      await expect(WorldBossBattleContract.connect(owner).stake(1, '1')).to.be.revertedWith('WBB: Token already staked');
+    });
+
     describe('check if player is eligible to Stake', function () {
       it('eligible', async function () {
         await WBBActionsContract.connect(owner).createBoss('0', 'abc', 100, 'abc');
@@ -333,53 +357,6 @@ describe('WorldBattleBoss contract', function () {
       });
     });
   });
-
-  // describe('Restake NFT', async function () {
-  //   it('should not be re-staked with wrong address', async function () {
-  //     //mint 1 nfts
-  //     await cdhInventory.mint(deployer, 1, 1, 0x00);
-
-  //     //minting Tower Tokens from NormalERC20
-  //     await towerToken.mint(deployer, '1000000000000000000000');
-
-  //     // we need the staker to setApproval for all to the staking system contract
-  //     await cdhInventory.connect(owner).setApprovalForAll(WorldBossBattleContract.address, true);
-
-  //     //creating boss
-  //     await WBBActionsContract.connect(owner).createBoss('0', 'abc', 100, 'abc');
-  //     //creating battle
-  //     await WBBActionsContract.connect(owner).createBattle('1', ['0'], timestampStartDate, timestampEndDate);
-
-  //     //staking token with BattleID
-  //     await WorldBossBattleContract.connect(owner).stake(1, '1');
-
-  //     expect(await cdhInventory.balanceOf(deployer, 1)).to.equal(0);
-  //     expect(await cdhInventory.balanceOf(nftHolder, 1)).to.equal(1);
-
-  //     //restaking with wrong address
-  //     await expect(WorldBossBattleContract.connect(addr1).restake(3, '1')).to.be.revertedWith('WBB: Unauthorized.');
-  //   });
-  //   it('Should restake an nft', async function () {
-  //     //mint 1 nfts
-  //     await cdhInventory.mint(deployer, 1, 1, 0x00);
-
-  //     //minting Tower Tokens from NormalERC20
-  //     await towerToken.mint(deployer, '1000000000000000000000');
-
-  //     //creating boss
-  //     await WBBActionsContract.connect(owner).createBoss('0', 'abc', 100, 'abc');
-  //     //creating battle
-  //     await WBBActionsContract.connect(owner).createBattle('BATTLE99', ['0'], timestampStartDate, timestampEndDate);
-
-  //     //staking token in battle
-  //     await WorldBossBattleContract.connect(owner).stake(1, 'BATTLE99');
-
-  //     await WorldBossBattleContract.connect(owner).restake(1, 'BATTLE99');
-
-  //     expect(await cdhInventory.balanceOf(deployer, 1)).to.equal(0);
-  //     expect(await cdhInventory.balanceOf(nftHolder, 1)).to.equal(1);
-  //   });
-  // });
 
   describe('WB Battle Operations ', function () {
     it('Should not create battle if boss is not created', async function () {
@@ -908,6 +885,134 @@ describe('WorldBattleBoss contract', function () {
       await WorldBossBattleContract.connect(owner).setBattlePeriodUnstakeStatus(true);
       await WorldBossBattleContract.connect(owner).unstakeTokensInternal(addr1.address, [1], 'BATTLE1');
       expect(await cdhInventory.balanceOf(addr1.address, 1)).to.equal(1);
+    });
+
+    it('Stake/Unstake multiple users', async function () {
+      // mint 1 nfts
+      await cdhInventory.mint(addr3.address, 1, 1, 0x00);
+      await cdhInventory.mint(addr4.address, 2, 1, 0x00);
+      await cdhInventory.mint(addr5.address, 3, 1, 0x00);
+
+      // minting Tower Tokens from NormalERC20
+      await towerToken.mint(addr3.address, '1000000000000000000000');
+      await towerToken.mint(addr4.address, '1000000000000000000000');
+      await towerToken.mint(addr5.address, '1000000000000000000000');
+
+      // creating boss
+      await WBBActionsContract.connect(owner).createBoss('0', 'abc', 100, 'abc');
+
+      //creating battle
+      await WBBActionsContract.connect(owner).createBattle('1', ['0'], timestampStartDate, timestampEndDate);
+
+      // approve tokens
+      await cdhInventory.connect(addr3).setApprovalForAll(WorldBossBattleContract.address, true);
+      await cdhInventory.connect(addr4).setApprovalForAll(WorldBossBattleContract.address, true);
+      await cdhInventory.connect(addr5).setApprovalForAll(WorldBossBattleContract.address, true);
+
+      // staking token in battle
+      await WorldBossBattleContract.connect(addr3).stake(1, '1');
+      await WorldBossBattleContract.connect(addr4).stake(2, '1');
+      await WorldBossBattleContract.connect(addr5).stake(3, '1');
+
+      // unstaking token
+      await WorldBossBattleContract.connect(owner).setBattlePeriodUnstakeStatus(true);
+
+      // validate remaining wallets
+      expect(await WorldBossBattleContract.connect(addr5).unstake(3, '1'));
+      expect(await WorldBossBattleContract.stakersAddress(0)).to.equals(addr3.address);
+      expect(await WorldBossBattleContract.stakersAddress(1)).to.equals(addr4.address);
+    });
+
+    it('Stake limit validate', async function () {
+      // mint nfts
+      await cdhInventory.mint(addr3.address, 1, 1, 0x00);
+      await cdhInventory.mint(addr3.address, 2, 1, 0x00);
+      await cdhInventory.mint(addr3.address, 3, 1, 0x00);
+
+      // minting Tower Tokens
+      await towerToken.mint(addr3.address, '1000000000000000000000');
+
+      // creating boss
+      await WBBActionsContract.connect(owner).createBoss('0', 'abc', 100, 'abc');
+
+      //creating battle
+      await WBBActionsContract.connect(owner).createBattle('1', ['0'], timestampStartDate, timestampEndDate);
+
+      // approve tokens
+      await cdhInventory.connect(addr3).setApprovalForAll(WorldBossBattleContract.address, true);
+
+      // staking token in battle
+      await WorldBossBattleContract.connect(owner).setMaxStakeCount(2);
+
+      // staking token in battle
+      await WorldBossBattleContract.connect(addr3).stake(1, '1');
+      await WorldBossBattleContract.connect(addr3).stake(2, '1');
+      await expect(WorldBossBattleContract.connect(addr3).stake(3, '1')).to.be.revertedWith('WBB: Max tokens staked.');
+
+      // multiple staking
+      await expect(WorldBossBattleContract.connect(addr3).stakeTokens([1, 2, 3], '1')).to.be.revertedWith('WBB: Max tokens staked.');
+    });
+  });
+
+  describe('World Boss Battle Action', function () {
+    it('Should create single battle for multiple bosses', async function () {
+      //creating boss
+      expect(await WBBActionsContract.connect(owner).createBoss('0', 'boss 0', 100, 'mock.uri')).to.emit(
+        WBBActionsContract,
+        owner.address,
+        '0',
+        'boss 0',
+        100,
+        'mock.uri'
+      );
+      expect(await WBBActionsContract.connect(owner).createBoss('1', 'boss 1', 100, 'mock.uri')).to.emit(
+        WBBActionsContract,
+        owner.address,
+        '1',
+        'boss 1',
+        100,
+        'mock.uri'
+      );
+      expect(await WBBActionsContract.connect(owner).createBoss('2', 'boss 2', 100, 'mock.uri')).to.emit(
+        WBBActionsContract,
+        owner.address,
+        '2',
+        'boss 1',
+        100,
+        'mock.uri'
+      );
+
+      await WBBActionsContract.connect(owner).createBattle('0', ['0', '1', '2'], timestampStartDate, timestampEndDate);
+
+      // check bosses exits
+      expect(await WBBActionsContract.checkBossExists('0')).to.equals(true);
+      expect(await WBBActionsContract.checkBossExists('1')).to.equals(true);
+      expect(await WBBActionsContract.checkBossExists('2')).to.equals(true);
+
+      // check bosses status
+      expect(await WBBActionsContract.checkBossStatus('0')).to.equals(true);
+      expect(await WBBActionsContract.checkBossStatus('1')).to.equals(true);
+      expect(await WBBActionsContract.checkBossStatus('2')).to.equals(true);
+
+      // revert if boss doesn't exists
+      await expect(WBBActionsContract.connect(owner).createBattle('1', ['3', '4', '5'], timestampStartDate, timestampEndDate)).to.be.revertedWith(
+        'WBB: boss not created'
+      );
+    });
+
+    it('Should not create battle if one of the boss is inactive', async function () {
+      await WBBActionsContract.connect(owner).createBoss('0', 'boss 0', 100, 'mock.uri');
+      await WBBActionsContract.connect(owner).createBoss('1', 'boss 1', 100, 'mock.uri');
+      await WBBActionsContract.connect(owner).createBoss('2', 'boss 2', 100, 'mock.uri');
+
+      expect(await WBBActionsContract.connect(owner).setBossStatus('2', false))
+        .to.emit(WBBActionsContract, 'SetBossStatus')
+        .withArgs(owner.address, '2', false);
+      expect(await WBBActionsContract.checkBossStatus('2')).to.equals(false);
+
+      await expect(WBBActionsContract.connect(owner).createBattle('0', ['0', '1', '2'], timestampStartDate, timestampEndDate)).to.be.revertedWith(
+        'WBB: boss not created'
+      );
     });
   });
 });

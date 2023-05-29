@@ -10,6 +10,8 @@ contract WBBData {
     event UpdateBattle(address indexed _operatorAddress, string _battleId, uint256 _startTime, uint256 _endTime);
     event CreateBoss(address indexed _operatorAddress, string _bossId, string _name, uint256 _maxHp, string _uri);
     event UpdateBoss(address indexed _operatorAddress, string _bossId, string _name, uint256 _maxHp, string _uri);
+    event SetBossStatus(address indexed _operator, string _bossId, bool _status);
+    event SetBattleStatus(address indexed _operator, string _battleId, bool _status);
 
     /** @notice Data structure to store the information of a battle.
      *  @field battleId The unique identifier for the battle.

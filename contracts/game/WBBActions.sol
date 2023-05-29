@@ -29,10 +29,12 @@ contract WBBActions is Initializable, ContextUpgradeable, WBBData {
     }
 
     function setBattleStatus(string memory _battleId, bool _status) external {
-        require(accessControls.hasManagerRole(msg.sender), "WBB: Unauthorized to set battle status");
+        address operatorAddress = msg.sender;
+        require(accessControls.hasManagerRole(operatorAddress), "WBB: Unauthorized to set battle status");
         require(checkBattleExists(_battleId), "WBB: Battle doesn't exist");
         Battle storage battleInstance = battles[_battleId];
         battleInstance.status = _status;
+        emit SetBattleStatus(operatorAddress, _battleId, _status);
     }
 
     /**
@@ -47,8 +49,6 @@ contract WBBActions is Initializable, ContextUpgradeable, WBBData {
         require(accessControls.hasManagerRole(operatorAddress), "WBB: Unauthorized to create battle");
         require(!checkBattleExists(_battleId), "WBB: Battle already Exists");
         require(_endTime > _startTime, "WBB: invalid battle period");
-
-        checkActiveBosses(_bossIds);
 
         Battle storage battleInstance = battles[_battleId];
         battleInstance.battleId = _battleId;
@@ -93,26 +93,26 @@ contract WBBActions is Initializable, ContextUpgradeable, WBBData {
 
     /// @notice function to check the battleStatus i.e true or false
     /// @param _battleId its a string
-    function checkBattleStatus(string memory _battleId) public view returns (bool) {
+    function checkBattleStatus(string calldata _battleId) public view returns (bool) {
         require(checkBattleExists(_battleId), "WBB: Battle doesn't exists");
         return battles[_battleId].status;
     }
 
     /// @notice to check the battle Ended or not i.e true or false
     /// @param _battleId its a string
-    function checkBattleEnded(string memory _battleId) public view returns (bool) {
+    function checkBattleEnded(string calldata _battleId) public view returns (bool) {
         return block.timestamp > battles[_battleId].endTime;
     }
 
     /// @notice to check the battle Started or not i.e true or false
     /// @param _battleId its a string
-    function checkBattleStarted(string memory _battleId) public view returns (bool) {
+    function checkBattleStarted(string calldata _battleId) public view returns (bool) {
         return block.timestamp > battles[_battleId].startTime;
     }
 
     /// @notice gives the end time of an battle in unix
     /// @param _battleId which is in string format
-    function getBattlePeriod(string memory _battleId) public view returns (uint256 startTime, uint256 endTime) {
+    function getBattlePeriod(string calldata _battleId) public view returns (uint256 startTime, uint256 endTime) {
         return (battles[_battleId].startTime, battles[_battleId].endTime);
     }
 
@@ -139,18 +139,12 @@ contract WBBActions is Initializable, ContextUpgradeable, WBBData {
     }
 
     function setBossStatus(string memory _bossId, bool _status) external {
-        require(accessControls.hasManagerRole(msg.sender), "WBB: Unauthorized to update boss status");
+        address operatorAddress = msg.sender;
+        require(accessControls.hasManagerRole(operatorAddress), "WBB: Unauthorized to update boss status");
         require(checkBossExists(_bossId), "WBB: Boss doesn't exist");
         Boss storage bossInstance = bosses[_bossId];
         bossInstance.status = _status;
-    }
-
-    /// @notice checks the boss is available or not
-    /// @param _bossId is should be given as parameter
-    function checkActiveBosses(string[] memory _bossId) public view {
-        for (uint i = 0; i < _bossId.length; i++) {
-            require(checkBossStatus(_bossId[i]), "WBB: boss not created");
-        }
+        emit SetBossStatus(operatorAddress, _bossId, _status);
     }
 
     /// @notice checks the boss is available or not
@@ -166,7 +160,7 @@ contract WBBActions is Initializable, ContextUpgradeable, WBBData {
      * @param maxHp is uint that have boss health and
      * @param uri is a string
      */
-    function createBoss(string memory bossId, string memory name, uint256 maxHp, string memory uri) public {
+    function createBoss(string calldata bossId, string calldata name, uint256 maxHp, string calldata uri) public {
         address operatorAddress = msg.sender;
         require(accessControls.hasManagerRole(operatorAddress), "WBB: Unauthorized to create boss");
         require(!checkBossExists(bossId), "WBB: Boss already Exists");
@@ -192,7 +186,7 @@ contract WBBActions is Initializable, ContextUpgradeable, WBBData {
      * @param maxHp is uint that have boss health and
      * @param uri is a string
      */
-    function updateBoss(string memory bossId, string memory name, uint256 maxHp, string memory uri) public {
+    function updateBoss(string calldata bossId, string calldata name, uint256 maxHp, string calldata uri) public {
         address operatorAddress = msg.sender;
         require(accessControls.hasManagerRole(operatorAddress), "WBB: Unauthorized to update boss");
         require(checkBossExists(bossId), "WBB: Boss doesn't exist");
@@ -205,7 +199,6 @@ contract WBBActions is Initializable, ContextUpgradeable, WBBData {
         bossInstance.maxHp = maxHp;
         bossInstance.uri = uri;
 
-        bossList.push(bossId);
         emit UpdateBoss(operatorAddress, bossId, name, maxHp, uri);
     }
 
@@ -213,4 +206,11 @@ contract WBBActions is Initializable, ContextUpgradeable, WBBData {
     function getAllBosses() public view virtual returns (string[] memory) {
         return bossList;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] __gap;
 }

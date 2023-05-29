@@ -9,7 +9,7 @@ describe('NFT Redemption contract', function () {
     //making signers ready
     const [owner, addr1, addr2, addr3, lastAddr] = await ethers.getSigners();
 
-    let privateKey = '';
+    let privateKey = '0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e';
     let randomWallet = new ethers.Wallet(privateKey);
     let silver_deployer = addr1.address;
     let bronze_deployer = addr2.address;
