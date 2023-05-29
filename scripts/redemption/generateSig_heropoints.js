@@ -15,7 +15,7 @@ const readConfiguration = (configurationFile) => {
 
 const ethNetworkUrl = 'http://localhost:8545';
 const CONTRACTS_CONFIGURATION = readConfiguration('./deployments/localhost/HeroPointsERC1155Redemption.json');
-HERO_POINTS_SIGNER_PRIVATE_KEY = '';
+HERO_POINTS_SIGNER_PRIVATE_KEY = ''; //
 
 const web3 = new Web3(ethNetworkUrl);
 

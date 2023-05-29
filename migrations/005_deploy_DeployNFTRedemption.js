@@ -1,9 +1,9 @@
 const {ethers} = require('hardhat');
 const {skipIfContractExists, multiSkip, skipIfChainIdIs} = require('../tasks/hardhat-deploy-migrations/migrations');
-const {redemptionConstructor} = require("../constants/CDHRedemption/redemption");
+const {redemptionConstructor} = require('../constants/CDHRedemption/redemption');
 
 module.exports = async ({getNamedAccounts, deployments, getChainId, getUnnamedAccounts}) => {
-  console.log(`Deploying Ticket NFT Redemption contract....`)
+  console.log(`Deploying Ticket NFT Redemption contract....`);
   const {deploy} = deployments;
   const {TicketRedemption_Wallet} = await getNamedAccounts();
 
@@ -14,14 +14,16 @@ module.exports = async ({getNamedAccounts, deployments, getChainId, getUnnamedAc
 
   await deploy('NFTRedemption', {
     from: TicketRedemption_Wallet,
-    args: [redemptionConstructorValues._cdhNft,
+    args: [
+      redemptionConstructorValues._cdhNft,
       redemptionConstructorValues._towerInventory,
       redemptionConstructorValues._equipmentPool,
       redemptionConstructorValues._heroPool,
       redemptionConstructorValues._spellPool,
       redemptionConstructorValues._towerPool,
       redemptionConstructorValues._blackHoleAddress,
-      redemptionConstructorValues._randomNumberSigner],
+      redemptionConstructorValues._randomNumberSigner,
+    ],
     log: true,
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
   });

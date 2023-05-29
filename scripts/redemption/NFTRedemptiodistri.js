@@ -1,15 +1,11 @@
-const { expect } = require("chai");
+const {expect} = require('chai');
 const {ethers, artifacts} = require('hardhat');
 var fs = require('fs');
-const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
+const {loadFixture} = require('@nomicfoundation/hardhat-network-helpers');
 const fsPromises = fs.promises;
 
-
-describe("NFT Redemption contract", async function () {
-
-
+describe('NFT Redemption contract', function () {
   async function deployContract() {
-
     //making signers ready
     const [owner, addr1, addr2, addr3, lastAddr] = await ethers.getSigners();
 
@@ -32,20 +28,19 @@ describe("NFT Redemption contract", async function () {
     const randomNumberSender = '0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199';
 
     /// getting contract factory of NFTRedemption
-    const NFTRedemptionCFactory = await ethers.getContractFactory("NFTRedemption");
-        // we use their address as parameters for the NFTRedemption
+    const NFTRedemptionCFactory = await ethers.getContractFactory('NFTRedemption');
+    // we use their address as parameters for the NFTRedemption
     const NFTRedemption = await NFTRedemptionCFactory.deploy(
-          cdhNft,
-          towerInventory,
-          equipmentPool,
-          heroPool,
-          spellPool,
-          towerPool,
-          blackHoleContract,
-          randomNumberSender
-        );
+      cdhNft,
+      towerInventory,
+      equipmentPool,
+      heroPool,
+      spellPool,
+      towerPool,
+      blackHoleContract,
+      randomNumberSender
+    );
     await NFTRedemption.deployed();
-
 
     const towerInventoryData = await fsPromises.readFile(towerInventory_path, 'utf8');
     const towerInventoryabi = JSON.parse(towerInventoryData)['abi'];
@@ -71,15 +66,26 @@ describe("NFT Redemption contract", async function () {
     const cdhNftInteraction = new ethers.Contract(cdhNft, cdhNftabi, owner);
 
     //giving minter role to NFTRedemption from cdhInventory contract
-    const MINTER_ROLE = "0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6";
-    let tx4= await cdhNftInteraction.grantRole(MINTER_ROLE, NFTRedemption.address);
+    const MINTER_ROLE = '0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6';
+    let tx4 = await cdhNftInteraction.grantRole(MINTER_ROLE, NFTRedemption.address);
 
-    return {NFTRedemption, cdhNft, towerInventory, deployer, owner, randomWallet, cdhNftInteraction, addr1, addr2, silver_deployer, bronze_deployer, addr3}
+    return {
+      NFTRedemption,
+      cdhNft,
+      towerInventory,
+      deployer,
+      owner,
+      randomWallet,
+      cdhNftInteraction,
+      addr1,
+      addr2,
+      silver_deployer,
+      bronze_deployer,
+      addr3,
+    };
+  }
 
-}
-
-
-  it("should redeem a gold ticket", async function () {
+  it('should redeem a gold ticket', async function () {
     const {NFTRedemption, deployer, owner, randomWallet, cdhNftInteraction} = await loadFixture(deployContract);
 
     //creating payload
@@ -87,24 +93,27 @@ describe("NFT Redemption contract", async function () {
       sender: deployer,
       contractAddress: NFTRedemption.address,
       quantity: 1,
-      ticket_type: 1
+      ticket_type: 1,
     };
 
     //redeeming 1000 tickets
-    for (i = 0; i < 10000; i++){
-              const signOrderPayload = async (payload) => {
-                let { sender, contractAddress, quantity, ticket_type} = payload;
-                const seedNonce = i;
-                console.log("seedNonce:", seedNonce);
-                const hash = ethers.utils.solidityKeccak256(['address', 'address','uint256', 'uint256', 'uint256'], [sender, contractAddress, quantity, ticket_type, seedNonce]);
-                const signature = await randomWallet.signMessage(ethers.utils.arrayify(hash));
-                return signature;
-              }
+    for (i = 0; i < 10000; i++) {
+      const signOrderPayload = async (payload) => {
+        let {sender, contractAddress, quantity, ticket_type} = payload;
+        const seedNonce = i;
+        console.log('seedNonce:', seedNonce);
+        const hash = ethers.utils.solidityKeccak256(
+          ['address', 'address', 'uint256', 'uint256', 'uint256'],
+          [sender, contractAddress, quantity, ticket_type, seedNonce]
+        );
+        const signature = await randomWallet.signMessage(ethers.utils.arrayify(hash));
+        return signature;
+      };
 
-              const fuseSig = await signOrderPayload(payload);
+      const fuseSig = await signOrderPayload(payload);
 
-              const txn_LAST= await NFTRedemption.connect(owner).redeemTicket(1, 1, fuseSig);
-              const receipt = await txn_LAST.wait();
+      const txn_LAST = await NFTRedemption.connect(owner).redeemTicket(1, 1, fuseSig);
+      const receipt = await txn_LAST.wait();
     }
 
     //getting tokens that are minted after redeeming ticket in user wallet
@@ -113,43 +122,49 @@ describe("NFT Redemption contract", async function () {
     //writing into json file
     const tokenInfoMapping = [];
     for (let tokenId of tokenList) {
-          tokenId = tokenId.toString();
-          const {rarity} = await cdhNftInteraction.info(tokenId);
-          const rarityMapping = {'0x01':'Common','0x02':'Rare','0x03':'Epic','0x04':'Legendary'};
-          const poolMapping = {'0x3cfBdd70FA500e9CB7Ef8dFB1c0407032BbA9d21':'Equipemnt','0x548f55A4dbDC965BB7107827A2ab04F444502bCc':'Hero','0x329dcF128fDd22C1aD2397f4Ccd6CdC25E098CA6':'Spell','0xdd77AcD78d5847c78D05289aD8cB40ddCF04C458':'Tower'};
-          const pool = await cdhNftInteraction['pool(uint256)'](tokenId);
-          tokenInfoMapping.push({ tokenId, rarity:rarityMapping[rarity], pool:poolMapping[pool] });
+      tokenId = tokenId.toString();
+      const {rarity} = await cdhNftInteraction.info(tokenId);
+      const rarityMapping = {'0x01': 'Common', '0x02': 'Rare', '0x03': 'Epic', '0x04': 'Legendary'};
+      const poolMapping = {
+        '0x3cfBdd70FA500e9CB7Ef8dFB1c0407032BbA9d21': 'Equipemnt',
+        '0x548f55A4dbDC965BB7107827A2ab04F444502bCc': 'Hero',
+        '0x329dcF128fDd22C1aD2397f4Ccd6CdC25E098CA6': 'Spell',
+        '0xdd77AcD78d5847c78D05289aD8cB40ddCF04C458': 'Tower',
+      };
+      const pool = await cdhNftInteraction['pool(uint256)'](tokenId);
+      tokenInfoMapping.push({tokenId, rarity: rarityMapping[rarity], pool: poolMapping[pool]});
     }
     fs.writeFileSync('tokenInfoGold.json', JSON.stringify(tokenInfoMapping));
   });
 
-
-  it("should redeem a silver ticket", async function () {
-    const {NFTRedemption,addr1, silver_deployer,randomWallet, cdhNftInteraction} = await loadFixture(deployContract);
+  it('should redeem a silver ticket', async function () {
+    const {NFTRedemption, addr1, silver_deployer, randomWallet, cdhNftInteraction} = await loadFixture(deployContract);
 
     //creating payload
     const payload = {
       sender: silver_deployer,
       contractAddress: NFTRedemption.address,
       quantity: 1,
-      ticket_type: 2
+      ticket_type: 2,
     };
 
     //redeeming 1000 tickets
-    for (i = 0; i < 1000; i++){
-        const signOrderPayload = async (payload) => {
-          let { sender, contractAddress, quantity, ticket_type} = payload;
-          const seedNonce = i;
-          console.log("seedNonce:", seedNonce);
-          const hash = ethers.utils.solidityKeccak256(['address', 'address','uint256', 'uint256', 'uint256'], [sender, contractAddress, quantity, ticket_type, seedNonce]);
-          const signature = await randomWallet.signMessage(ethers.utils.arrayify(hash));
-          return signature;
-        }
+    for (i = 0; i < 1000; i++) {
+      const signOrderPayload = async (payload) => {
+        let {sender, contractAddress, quantity, ticket_type} = payload;
+        const seedNonce = i;
+        console.log('seedNonce:', seedNonce);
+        const hash = ethers.utils.solidityKeccak256(
+          ['address', 'address', 'uint256', 'uint256', 'uint256'],
+          [sender, contractAddress, quantity, ticket_type, seedNonce]
+        );
+        const signature = await randomWallet.signMessage(ethers.utils.arrayify(hash));
+        return signature;
+      };
 
-        const fuseSig = await signOrderPayload(payload);
-        const txn_LAST= await NFTRedemption.connect(addr1).redeemTicket(2, 1, fuseSig);
-        const receipt = await txn_LAST.wait();
-
+      const fuseSig = await signOrderPayload(payload);
+      const txn_LAST = await NFTRedemption.connect(addr1).redeemTicket(2, 1, fuseSig);
+      const receipt = await txn_LAST.wait();
     }
 
     //getting tokens that are minted after redeeming ticket in user wallet
@@ -160,60 +175,70 @@ describe("NFT Redemption contract", async function () {
     for (let tokenId of tokenList) {
       tokenId = tokenId.toString();
       const {rarity} = await cdhNftInteraction.info(tokenId);
-      const rarityMapping = {'0x01':'Common','0x02':'Rare','0x03':'Epic','0x04':'Legendary'};
-      const poolMapping = {'0x3cfBdd70FA500e9CB7Ef8dFB1c0407032BbA9d21':'Equipemnt','0x548f55A4dbDC965BB7107827A2ab04F444502bCc':'Hero','0x329dcF128fDd22C1aD2397f4Ccd6CdC25E098CA6':'Spell','0xdd77AcD78d5847c78D05289aD8cB40ddCF04C458':'Tower'};
+      const rarityMapping = {'0x01': 'Common', '0x02': 'Rare', '0x03': 'Epic', '0x04': 'Legendary'};
+      const poolMapping = {
+        '0x3cfBdd70FA500e9CB7Ef8dFB1c0407032BbA9d21': 'Equipemnt',
+        '0x548f55A4dbDC965BB7107827A2ab04F444502bCc': 'Hero',
+        '0x329dcF128fDd22C1aD2397f4Ccd6CdC25E098CA6': 'Spell',
+        '0xdd77AcD78d5847c78D05289aD8cB40ddCF04C458': 'Tower',
+      };
 
       const pool = await cdhNftInteraction['pool(uint256)'](tokenId);
-      tokenInfoMapping.push({ tokenId, rarity:rarityMapping[rarity], pool:poolMapping[pool] });
+      tokenInfoMapping.push({tokenId, rarity: rarityMapping[rarity], pool: poolMapping[pool]});
     }
     fs.writeFileSync('tokenInfoSilver.json', JSON.stringify(tokenInfoMapping));
   });
 
-
-  it("should redeem a bronze ticket", async function () {
-    const {NFTRedemption,addr2, bronze_deployer, randomWallet, cdhNftInteraction} = await loadFixture(deployContract);
+  it('should redeem a bronze ticket', async function () {
+    const {NFTRedemption, addr2, bronze_deployer, randomWallet, cdhNftInteraction} = await loadFixture(deployContract);
 
     //creating payload
     const payload = {
       sender: bronze_deployer,
       contractAddress: NFTRedemption.address,
       quantity: 1,
-      ticket_type: 3
+      ticket_type: 3,
     };
 
     //redeeming 1000 tickets
-    for (i = 0; i < 1000; i++){
-    const signOrderPayload = async (payload) => {
-      let { sender, contractAddress, quantity, ticket_type} = payload;
-      const seedNonce = i;
-      console.log("seedNonce:", seedNonce);
-      const hash = ethers.utils.solidityKeccak256(['address', 'address','uint256', 'uint256', 'uint256'], [sender, contractAddress, quantity, ticket_type, seedNonce]);
-      const signature = await randomWallet.signMessage(ethers.utils.arrayify(hash));
-      return signature;
+    for (i = 0; i < 1000; i++) {
+      const signOrderPayload = async (payload) => {
+        let {sender, contractAddress, quantity, ticket_type} = payload;
+        const seedNonce = i;
+        console.log('seedNonce:', seedNonce);
+        const hash = ethers.utils.solidityKeccak256(
+          ['address', 'address', 'uint256', 'uint256', 'uint256'],
+          [sender, contractAddress, quantity, ticket_type, seedNonce]
+        );
+        const signature = await randomWallet.signMessage(ethers.utils.arrayify(hash));
+        return signature;
+      };
+
+      const fuseSig = await signOrderPayload(payload);
+
+      const txn_LAST = await NFTRedemption.connect(addr2).redeemTicket(3, 1, fuseSig);
+      const receipt = await txn_LAST.wait();
     }
 
-    const fuseSig = await signOrderPayload(payload);
+    //getting tokens that are minted after redeeming ticket in user wallet
+    const tokenList = await cdhNftInteraction.getAllTokens(addr2.address);
 
-    const txn_LAST= await NFTRedemption.connect(addr2).redeemTicket(3, 1, fuseSig);
-    const receipt = await txn_LAST.wait();
-  }
-
-  //getting tokens that are minted after redeeming ticket in user wallet
-  const tokenList = await cdhNftInteraction.getAllTokens(addr2.address);
-
-  //writing into json file
-  const tokenInfoMapping = [];
-  for (let tokenId of tokenList) {
+    //writing into json file
+    const tokenInfoMapping = [];
+    for (let tokenId of tokenList) {
       tokenId = tokenId.toString();
       const {rarity} = await cdhNftInteraction.info(tokenId);
-      const rarityMapping = {'0x01':'Common','0x02':'Rare','0x03':'Epic','0x04':'Legendary'};
-      const poolMapping = {'0x3cfBdd70FA500e9CB7Ef8dFB1c0407032BbA9d21':'Equipemnt','0x548f55A4dbDC965BB7107827A2ab04F444502bCc':'Hero','0x329dcF128fDd22C1aD2397f4Ccd6CdC25E098CA6':'Spell','0xdd77AcD78d5847c78D05289aD8cB40ddCF04C458':'Tower'};
+      const rarityMapping = {'0x01': 'Common', '0x02': 'Rare', '0x03': 'Epic', '0x04': 'Legendary'};
+      const poolMapping = {
+        '0x3cfBdd70FA500e9CB7Ef8dFB1c0407032BbA9d21': 'Equipemnt',
+        '0x548f55A4dbDC965BB7107827A2ab04F444502bCc': 'Hero',
+        '0x329dcF128fDd22C1aD2397f4Ccd6CdC25E098CA6': 'Spell',
+        '0xdd77AcD78d5847c78D05289aD8cB40ddCF04C458': 'Tower',
+      };
 
       const pool = await cdhNftInteraction['pool(uint256)'](tokenId);
-      tokenInfoMapping.push({ tokenId, rarity:rarityMapping[rarity], pool:poolMapping[pool] });
+      tokenInfoMapping.push({tokenId, rarity: rarityMapping[rarity], pool: poolMapping[pool]});
     }
     fs.writeFileSync('tokenInfoBronze.json', JSON.stringify(tokenInfoMapping));
   });
-
-
 });

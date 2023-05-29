@@ -41,7 +41,7 @@ const BadgesDetailsMap = [
   {tokenId: 36, tokenName: 'TOWER Complete Attendance Badge - December 2022', isSoulBound: true},
   {tokenId: 37, tokenName: 'TOWER Play-and-Earn Legendary Badge - December 2022', isSoulBound: true},
   {tokenId: 38, tokenName: 'TOWER x OnePlanet Event Badge - Battle Cards', isSoulBound: true},
-  {tokenId: 39, tokenName: 'TOWER x OnePlanet Event Badge - Treasury', isSoulBound: true}
+  {tokenId: 39, tokenName: 'TOWER x OnePlanet Event Badge - Treasury', isSoulBound: true},
 ];
 
 module.exports = {

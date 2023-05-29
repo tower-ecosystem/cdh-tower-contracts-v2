@@ -8,7 +8,6 @@ module.exports = async ({getNamedAccounts, deployments, getChainId, getUnnamedAc
   let networkChainId = await getChainId();
   console.log(`getChainId: ${networkChainId}`);
 
-
   await execute(
     'CDHBadges',
     {

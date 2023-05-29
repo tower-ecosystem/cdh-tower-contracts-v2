@@ -150,7 +150,7 @@ contract NFTRedemption is Ownable, Pausable {
             return 5;
         } else if (_ticketType == TicketType.SILVER_TICKET) {
             return 4;
-        } else if (_ticketType == TicketType.BRONZE_TICKET){
+        } else if (_ticketType == TicketType.BRONZE_TICKET) {
             return 3;
         }
         return 0;
@@ -181,7 +181,7 @@ contract NFTRedemption is Ownable, Pausable {
      * @param _counter Card index for the ticket redemption.
      * @return randomly generated Card ID for token
      */
-    function generateCardId(bytes32 _baseSeed, TicketType _ticketType, uint256 i, uint256 _counter) public view returns (uint256){
+    function generateCardId(bytes32 _baseSeed, TicketType _ticketType, uint256 i, uint256 _counter) public view returns (uint256) {
         bytes32 poolSeed = keccak256(abi.encodePacked("POOL", _baseSeed, i, _counter));
         bytes1 poolId = bytes1(bytes32(((uint256(poolSeed) % NUMBER_OF_POOLS) + 1) << 248));
         address poolAddress = _getPool(poolId);
