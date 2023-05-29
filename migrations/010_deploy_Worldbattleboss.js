@@ -9,7 +9,7 @@ module.exports = async ({getNamedAccounts, deployments, getChainId, getUnnamedAc
   let networkChainId = await getChainId();
 
   let preprod = true;
-  if (preprod) {
+  if (networkChainId === '137' && preprod) {
     networkChainId = '137-preprod';
   }
   let {_cdhNft, _towerToken, _maxStakeCount} = GameConfig[networkChainId];
